@@ -32,3 +32,28 @@ Historical depreciation for Internal Combustion Engine (ICE) vehicles tend to fo
 #### Brand Variety
 
 Depreciation differs as premium and economy brands lose value at different rates. Treating them with the same depreciation model leads to pricing inefficiencies.
+
+### What are the business objectives?
+
+- **Profit Optimization:** Predict the resale price of a vehicle based on it’s attributes using a machine learning model allowing dealership and second hand car platforms to set offers that guarantees a specific profit margin.
+- **Generate Actionable Insights:** Quantify the specific depreciation curves of different brands and, figure out what factors have the most prominent impact on resale value to optimally choose vehicles for inventory based on value perseverance.
+- **Crafting a Purchasing Strategy:** Compare the resale stability of Petrol vs. Electric vehicles to decide if the dealership should pivot its inventory strategy toward or away from EVs based on current resale trends.
+- **Develop a Prediction Model:** Formulate a predictive framework to ascertain vehicle resale values predicated on empirical insights derived from regression analyses of various attributes/features, thereby attaining a high level of predictive precision.
+- **Identifying Depreciation Patterns:** Evaluate the reduction in the value of a vehicle in relation to features/attributes, contrast the rates of depreciation between internal combustion engine (ICE) vehicles and electric vehicles (EVs), and ascertain the brands that maintain the highest residual value.
+- **Pricing Clarity:** Ensure clarity regarding the elements that affect the pricing of vehicles (for instance, being equipped to elucidate to a customer the rationale behind their vehicle's lower valuation).
+
+### What is the success criteria?
+
+#### **Business Success Criteria:**
+
+- **Secure Targeted Profit Margins:** Eliminate excessive compensation by implementing a pricing model that ensures a baseline gross profit margin of no less than ten percent upon the resale.
+- **Capture Valuation Factors:** Identify the attributes with the most noticeable impact on the vehicle’s resale price wither it is for internal combustion engines (odometer) or electric vehicles (battery health).
+- **Evaluate Vehicle Realistically:** Utilize a data-driven pricing methodology as opposed to depending on subjective “expertise” or a uniform valuation, while accounting for variables that are not linearly quantifiable.
+- **Coping with Market Shocks:** Adjust pricing strategies, especially concerning electric vehicles, to alleviate financial risk stemming from sudden market variances, such as immediate modifications in government subsidies.
+
+#### **Data Mining Success Criteria:**
+
+- **Prediction Accuracy:** Attain a Root Mean Squared Error (RMSE) or a Mean Absolute Percentage Error (MAPE) that is low to ensure commercial viability.
+- **Variance Explained:** Secure an $R^2$ score exceeding $0.80$, demonstrating that the model accounts for no less than 80% of the variance in pricing as determined by the available features.
+- **Being Actionable:** The model must demonstrate it’s performance on unseen data to ensure it isn't memorizing specific car listings which is evaluated by the metrics mentioned above.
+- **Model Deployment:** The trained model is implemented with an interface that enables dealerships to input the characteristics of the vehicles and receive the predicted resale price.
