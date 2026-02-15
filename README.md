@@ -129,3 +129,77 @@ Minimum Requirements:
 - **EV Data Scarcity:** Electric Vehicles often constitute less than 5% of the dataset, adversely  resulting in broader confidence intervals and increased uncertainty relative to ICE vehicles.
 - **Static Models:** The model lacks real-time market data integration, rendering it ineffectual in accounting for price variations precipitated by changes in consumer demand or auction trends.
 - **Economical Factors Exclusion:** The analysis neglects external variables like inflation, fuel prices, or interest rates, which substantially impact vehicle affordability and market volume.
+
+### Risks and contingencies
+
+#### Technical Risks
+
+1. **Poor model performance**
+    - **Likelihood:** Medium
+    - **Impact:** High
+    - **Contingency:**
+2. **Insufficient EV data**
+    - **Likelihood:** High
+    - **Impact:** Medium
+    - **Contingency:** Combine hybrid vehicles, reduce scope to brand-only analysis
+3. **Multicollinearity issues (Mileage vs Year)**
+    - **Likelihood:** Medium
+    - **Impact:** Medium
+    - **Contingency:**
+4. **Overfitting**
+    - **Likelihood:** Medium
+    - **Impact:** Medium
+    - **Contingency:** Cross-validation, early stopping, simpler models
+5. **Missing/wrong data**
+    - **Likelihood:** High
+    - **Impact:** High
+    - **Contingency:** EDA, multiple imputation strategies, sensitivity analysis
+
+### Project Risks
+
+1. **Tight deadline**
+    - **Likelihood:** High
+    - **Impact:** High
+    - **Contingency:** Prioritize simpler models first
+2. **Software/environment issues**
+    - **Likelihood:** Medium
+    - **Impact:** Medium
+    - **Contingency:** Use Google Colab, version control
+3. **Scope creep**
+    - **Likelihood:** Medium
+    - **Impact:** Medium
+    - **Contingency:** Strictly adhere to project requirements
+4. **Dataset unavailability**
+    - **Likelihood:** Low
+    - **Impact:** Critical
+    - **Contingency:** Use region/brand specific datasets
+
+### Business Logic Risks
+
+1. **Wrong profit margin assumptions**
+    - **Likelihood:** Medium
+    - **Impact:** Medium
+    - **Contingency:** Test multiple margin scenarios (10%, 15%, 20%)
+2. **Changing Market conditions**
+    - **Likelihood:** High
+    - **Impact:** Medium
+    - **Contingency:** Mentioned in business requirement
+3. **External factors not captured**
+    - **Likelihood:** High
+    - **Impact:** Low
+    - **Contingency:** Mentioned in business requirement, suggested for future implementation
+
+### Costs and benefits
+
+**Costs**
+
+- **Development Time:** The primary expense pertains to the duration necessitated for data cleaning, exploratory analysis, and the development of the predictive model.
+- **Compute Resources:** The financial implications are minimal as the analysis and training are being done on either a personal laptop or a cloud provider which offers free tier service suitable for the project.
+- **Model Maintenance:** In practical applications, this model would necessitate quarterly retraining to account for new car models and adapt to fluctuation economic conditions.
+
+**Benefits**
+
+- **Reduced Overpayment:** Dealerships could diminish acquisition overpayment by identifying overpriced units during the trade-in.
+- **Faster, more consistent pricing decisions:** This approach eradicates human biases, guaranteeing that each trade-in is assessed properly.
+- **Guaranteed Profit Margins:** The model calculates a "Maximum Buy Price" by automatically subtracting target margins and refurbishing costs from the predicted retail price, ensuring profitability.
+- **Scalability:** Allows the dealership to analyze numerous auction listings or trade-in requests concurrently, a scale of operation that is impossible to match with traditional methods.
