@@ -203,3 +203,15 @@ Minimum Requirements:
 - **Faster, more consistent pricing decisions:** This approach eradicates human biases, guaranteeing that each trade-in is assessed properly.
 - **Guaranteed Profit Margins:** The model calculates a "Maximum Buy Price" by automatically subtracting target margins and refurbishing costs from the predicted retail price, ensuring profitability.
 - **Scalability:** Allows the dealership to analyze numerous auction listings or trade-in requests concurrently, a scale of operation that is impossible to match with traditional methods.
+
+### Data mining goals
+
+1. **Primary Goals**
+   - Price Prediction Model Development (5+ regression models, R² ≥ 0.80)
+   - Profit Margin Prediction Framework (10% margin calculator)
+   - Petrol vs. EV Depreciation Comparison (statistical hypothesis testing)
+2. **Secondary Goals**
+   - Brand Value Retention Analysis (Toyota vs BMW comparison)
+   - Feature Importance Analysis (mileage, year, brand impact)
+   - Depreciation Pattern Discovery (linear vs non-linear)
+   - Data Quality Assessment
