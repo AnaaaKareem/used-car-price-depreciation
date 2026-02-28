@@ -215,3 +215,44 @@ Minimum Requirements:
    - Feature Importance Analysis (mileage, year, brand impact)
    - Depreciation Pattern Discovery (linear vs non-linear)
    - Data Quality Assessment
+
+## Data Understanding
+
+### Initial data collection
+
+The initial data collection process involved gathering used car data from two public kaggle datasets to create a diverse data collection:
+
+1. **100,000 UK Used Car Data set**: 11 individual CSV files separated by car manufacturer. (These were collected and concatenated into a single dataset)
+2. **Used Cars Dataset (Andrei Novikov)**: A broader source of used car listings containing the same features as the 100,000 UK Used Car Dataset.
+
+### Data description
+
+Across the two datasets, the core focus was to extract and standardize nine features consisting of:
+
+- **make**: The brand or manufacturer of the car.
+- **model**: The specific model of the car.
+- **year**: The manufacturing or registration year of the vehicle.
+- **mileage**: The total distance the car has been driven.
+- **transmission**: The type of gearbox.
+- **fuelType**: The type of fuel the vehicle consumes (e.g., Petrol, Diesel, Hybrid, Electric).
+- **mpg**: Miles per gallon, representing the vehicle's fuel efficiency (not applicable for EVs).
+- **engineSize**: The engine capacity in liters (not applicable for EVs).
+- **price**: The target variable, representing the listed selling price of the used car.
+
+### Data exploration
+
+During the data exploration, several discrepancies across the two data sources were identified which necessitated standardizing the formats prior to merging:
+
+- **Inconsistent Naming conventions**: The same car makes were represented differently across datasets (e.g., merc or cclass instead of mercedes-benz, and vw instead of volkswagen).
+- **Complex Strings & Nested Data**: Models in some datasets contained extra information that needs stripping.
+- **Compound Variables**: Important numerical values like engineSize and mpg were located within text strings and needs to be extracted.
+- **Categorical Variations**: Transmission and Fuel Type fields had several labels with the same meaning (e.g., M/T vs Manual, Premium vs Petrol) that needs grouping into standardized categories.
+
+### Data quality
+
+The data quality assessment highlighted a few issues that were directly addressed during the cleaning and integration pipelines:
+
+- **Irrelevant/Redundant Features**: Tax columns were dropped as they were not consistently available or relevant across all datasets.
+- **Missing Values**: Missing values or formatting errors that resulted in null objects were dropped from the final unified dataset.
+- **Duplication Risk**: Combining multiple data sources created a chance of having identical rows, which we found and removed using the pandas de-duplication tool to prevent data leakage and biased models.
+- **Formatting and Typing Consistency**: Applying lower and title casing, along with converting extracted text into numerical types like floats for engine size and mpg, and organizing columns into a specific order ensured the structural quality and consistency of the combined dataset.
