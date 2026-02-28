@@ -256,3 +256,49 @@ The data quality assessment highlighted a few issues that were directly addresse
 - **Missing Values**: Missing values or formatting errors that resulted in null objects were dropped from the final unified dataset.
 - **Duplication Risk**: Combining multiple data sources created a chance of having identical rows, which we found and removed using the pandas de-duplication tool to prevent data leakage and biased models.
 - **Formatting and Typing Consistency**: Applying lower and title casing, along with converting extracted text into numerical types like floats for engine size and mpg, and organizing columns into a specific order ensured the structural quality and consistency of the combined dataset.
+
+# Data Preparation
+
+## **Rationale for inclusion/exclusion**
+
+| **Feature** | **Decision** | **Rationale** |
+| --- | --- | --- |
+| make | **Included** | Buyers pay different amounts depending on the manufacturer. |
+| model | **Included** | The specific car model dictates the baseline price. |
+| year | **Included** | Age dictates how much value a car loses over time. |
+| mileage | **Included** | Buyers look at the odometer to judge wear and tear. |
+| transmission | **Included** | People have strong preferences for manual or automatic gearboxes. |
+| fuelType | **Included** | Running costs change based on the fuel the car needs. |
+| mpg | **Included** | Fuel efficiency changes the long term ownership cost. |
+| engineSize | **Included** | Bigger engines mean higher insurance premiums and performance expectations. |
+| price | **Included** | We use this target variable to build the predictive model. |
+| tax / tax(£) | **Excluded** | Missing data across the sources creates formatting problems. |
+| engine (raw string) | **Excluded** | We pulled the numerical data out to make a new column. |
+
+## **Derived attributes**
+
+- **make (UK dataset):** The dataset originally came in separate files for each car brand without a brand column. File names were used to create the brand names.
+- **engineSize (Andrei Novikov dataset):** Engine size data is buried inside text descriptions. The numbers pulled out to create a clean numerical column for engine capacity.
+- **mpg (Andrei Novikov dataset):** Fuel economy as a range between two numbers. The average of those two numbers were taken to get a single value for each car.
+- **model (Andrei Novikov dataset):** Car model names contained extra data and engine specifications. The first word were only kept to group similar cars together cleanly.
+
+## **Generated records**
+
+No synthetic or artificially generated records were introduced into the dataset. All rows in the final combined dataset originate directly from the three source datasets. The only record-level operations performed were filtering (removing rows with missing price values) and de-duplication (removing exact duplicate entries introduced during the merging process).
+
+## **Merged data**
+
+The three independently processed datasets were merged through vertical concatenation (row-wise) into a single unified DataFrame:
+
+1. **Feature renaming** was performed first — all three datasets were transformed to share an identical set of nine columns with consistent naming across the two datasets (e.g., manufacturer → make, fuel_type → fuelType).
+2. **Concatenation** was then carried out using pd.concat() with ignore_index=True, ensuring a continuous integer index across the combined dataset.
+3. **De-duplication** was applied using drop_duplicates() to remove any exact duplicate rows that may have appeared across the overlapping source datasets.
+4. **Null removal** was performed as a final step — any rows where the price column was null after merging were dropped to ensure every record in the final dataset has a valid prediction target.
+
+## **Reformatted data**
+
+- **Consistent Casing:** All make values were converted to lowercase; fuelType values were converted to title case; and transmission values were capitalised — making the data match across all the different sources.
+- **Standardised Category Labels:** Overlapping categorical values were mapped to a single label (e.g., Gasoline / Premium → Petrol; manual / m/t → Manual).
+- **Numerical Type Casting:** Derived features (engineSize, mpg) were explicitly stored as float types rather than left as strings.
+- **Column Ordering:** All datasets were re-indexed to a fixed column order (make, model, year, mileage, transmission, fuelType, mpg, engineSize, price) before and after merging, ensuring structural consistency.
+- **Export:** The final combined dataset was exported to CSV with index=False, producing a file (combined_final_dataset.csv) ready for modelling.
