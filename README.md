@@ -432,14 +432,14 @@ The construction of the Random Forest framework involved elaborate hyperparamete
 According to the finalized empirical diagnostics, The meticulously tuned Random Forest architecture demonstrated mathematically exceptional financial estimations:
 - **Mean Absolute Error (MAE):** The concluding tuned configuration recorded an MAE quantified at exactly $1,885.67, significantly outperforming the competing optimized KNN pipeline ($1,987.12).
 - **Root Mean Squared Error (RMSE):** Parallelly, the architecture yielded a minimized RMSE amounting to $2,781.09.
-- **Coefficient of Determination ($R^2$):** A phenomenal scoring benchmark was charted cleanly at 0.9492, verifying computationally that the infrastructure accurately encapsulates essentially 95% of the total variance associated with explicit pricing.
+- **Coefficient of Determination ($R^2$):** A phenomenal scoring benchmark was charted cleanly at 0.9492, verifying computationally that the infrastructure accurately encapsulates essentially ninety-five percent of the total variance associated with explicit pricing.
 - **Mean Absolute Percentage Error (MAPE):** Furthermore, The algorithm generated an impressive MAPE of strictly 8.57%, definitively confirming that the constructed implementation delivers rigidly stabilized forecasting stability optimally.
 
 # Evaluation
 
 ## Evaluate Results
 - **Business Criteria Integrity:** The finalized structural pipeline generated a Mean Absolute Error (MAE) evaluated rigidly at $1,885.67 following hyperparameter optimization. Consequently, The model successfully traversed the stringent $2,000 algorithmic threshold fundamentally mandated to support viable buyer/seller deployment decisions.
-- **Technical Benchmarks:** Analyzing the overarching computational metrics, All seven independent machine learning algorithms successfully exceeded the strictly isolated $R^2$ baseline limit (0.80). Furthermore, The champion Random Forest configuration autonomously achieved an elite 0.9492 reading following tuning.
+- **Technical Benchmarks:** Analyzing the overarching computational metrics, All seven independent machine learning algorithms successfully exceeded the strictly isolated $R^2$ baseline limit (0.80). Furthermore, The champion Random Forest configuration autonomously achieved an elite $R^2$ of 0.9492 following tuning, alongside the KNN Regressor achieving 0.9446.
 
 ## Review Process
 - **Data Architecture Validation:** All relevant repositories (encompassing historical ICE datasets and dynamically scraped AutoTrader EV groupings) were ingested successfully. Furthermore, Strict 80/20 train-test evaluation splits were maintained seamlessly without introducing systemic data leakages.
