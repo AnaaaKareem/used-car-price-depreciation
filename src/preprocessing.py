@@ -182,7 +182,11 @@ if __name__ == "__main__":
     # Execute final cleaning by removing duplicates and unrealistic outliers
     final_df.drop_duplicates(inplace=True)
     final_df = final_df[final_df['price'] >= 500]
-    final_df = final_df[final_df['engineSize'] <= 6.0]
+    final_df = final_df[
+        ((final_df['engineSize'] <= 6.0) & (final_df['engineSize'] >= 1.0)) |
+        (final_df['fuelType'] == 'electric') |
+        (final_df['fuelType'] == 'hybrid')
+    ]
     final_df = final_df.dropna(subset=['price', 'age', 'mileage'])
 
     # Apply grouped mode imputation to categorical features (transmission, fuelType)
