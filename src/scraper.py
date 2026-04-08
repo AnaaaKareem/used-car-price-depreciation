@@ -176,7 +176,7 @@ def scrape_vehicle_data(page, url):
         print(f"Failed to scrape {url}: {str(e)}")
         return None
 
-if __name__ == "__main__":
+def run_scraper():
     # Initialize a list to store scraped car record dictionaries
     scraped_data = []
 
@@ -219,3 +219,7 @@ if __name__ == "__main__":
         
         # Output save confirmation to the console
         print(f"New data saved to: {RAW_OUTPUT_PATH}")
+
+if __name__ == "__main__":
+    # Execute the scraper pipeline
+    run_scraper()

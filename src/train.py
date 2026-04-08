@@ -110,93 +110,96 @@ def evaluate_performance(model, X, y, set_name="Test"):
     # Return the R2 score to facilitate variance checks and overfitting detection
     return r2
 
+def run_training():
+        # Ensure the target model directory exists before initiating the training process
+        os.makedirs(MODEL_DIR, exist_ok=True)
+
+        # Start the data preparation and stratified splitting phase
+        # Load the master processed dataset and apply logic-based preprocessing
+        dataset = load_final_dataset()
+        dataset, mpg_med, engine_med = prepare_features(dataset)
+
+        # Separate the feature matrix (X) from the target vector (y)
+        X = dataset.drop(columns=['price'])
+        y = dataset['price']
+
+        # Perform a stratified split to ensure consistent EV representation across training and test sets
+        X_train_raw, X_test_raw, y_train, y_test = train_test_split(
+            X, y, test_size=TEST_SIZE, random_state=RANDOM_SEED, stratify=X['is_ev']
+        )
+
+        # Output the dimensions of the training and testing partitions
+        print(f"Split data into Training ({X_train_raw.shape[0]}) and Testing ({X_test_raw.shape[0]}) partitions")
+
+        # Apply One-Hot Encoding to low-cardinality features to prevent false ordinality in models
+        low_card = ['country', 'transmission', 'fuelType']
+        X_train = pd.get_dummies(X_train_raw, columns=low_card, drop_first=True)
+        X_test = pd.get_dummies(X_test_raw, columns=low_card, drop_first=True)
+
+        # Align training and testing feature sets to maintain consistent dimensionality
+        X_train, X_test = X_train.align(X_test, join='left', axis=1, fill_value=0)
+        print(f"Final feature matrix contains {X_train.shape[1]} columns after One-Hot Encoding")
+
+        # Calculate sample weights to prioritize predictive accuracy within the UK market
+        weights = np.where(X_train_raw['country'] == 'uk', 4.0, 0.5)
+        print("Computed sample weights (UK: 4.0, Other: 0.5) to prioritize regional accuracy")
+
+        # Start the hyperparameter tuning and optimization phase
+        base_pipeline = build_pipeline()
+
+        # Define the search space for hyperparameter optimization to improve model stability
+        params = {
+            'regressor__n_estimators': [100, 200, 300],
+            'regressor__max_depth': [10, 20, None],
+            'regressor__max_features': ['sqrt', 1.0]
+        }
+
+        # Initialize RandomizedSearchCV with 5-fold cross-validation to find the optimal configuration
+        search = RandomizedSearchCV(
+            base_pipeline, params, n_iter=10, cv=5, 
+            scoring='neg_mean_absolute_error', n_jobs=-1, random_state=RANDOM_SEED
+        )
+
+        # Execute the hyperparameter search using calculated sample weights for training
+        print("Initiating RandomizedSearchCV optimization phase...")
+        search.fit(X_train, y_train, regressor__sample_weight=weights)
+
+        # Extract the best performing pipeline estimator for final assessment
+        best_model = search.best_estimator_
+
+        # Log the optimal parameters identified by the search process
+        print(f"Optimization phase concluded. Best Parameters: {search.best_params_}")
+
+        # Execute model assessment and overfitting audit
+        train_r2 = evaluate_performance(best_model, X_train, y_train, "Training")
+
+        # Evaluate the test set to verify generalization capability on unseen data
+        test_r2 = evaluate_performance(best_model, X_test, y_test, "Testing")
+
+        # Output the R2 variance to detect potential overfitting issues
+        print(f"\nR² Variance (Train - Test): {train_r2 - test_r2:.4f}")
+
+        # Perform robust cross-validation to verify model consistency across folds
+        print("Executing 5-Fold Cross-Validation on the optimized model...")
+        cv_scores = cross_val_score(best_model, X_train, y_train, cv=5, scoring='r2')
+
+        # Output the mean R2 score and standard deviation across folds to verify stability
+        print(f"Mean CV R²: {cv_scores.mean():.4f} (+/- {cv_scores.std():.4f})")
+
+        # Package the model, features, and imputation metadata into a deployment bundle
+        bundle = {
+            "pipeline": best_model,
+            "non_ev_mpg_median": mpg_med,
+            "non_ev_engine_median": engine_med,
+            "feature_columns": list(X_train.columns)
+        }
+
+        # Save the deployment bundle to the model directory using joblib serialization
+        save_path = os.path.join(MODEL_DIR, 'model.pkl')
+        joblib.dump(bundle, save_path)
+
+        # Output final verification confirmation to the console
+        print(f"\nFinal Deployment Bundle saved successfully to: {save_path}")
 if __name__ == "__main__":
-    # Ensure the target model directory exists before initiating the training process
-    os.makedirs(MODEL_DIR, exist_ok=True)
-
-    # Start the data preparation and stratified splitting phase
-    # Load the master processed dataset and apply logic-based preprocessing
-    dataset = load_final_dataset()
-    dataset, mpg_med, engine_med = prepare_features(dataset)
-
-    # Separate the feature matrix (X) from the target vector (y)
-    X = dataset.drop(columns=['price'])
-    y = dataset['price']
-
-    # Perform a stratified split to ensure consistent EV representation across training and test sets
-    X_train_raw, X_test_raw, y_train, y_test = train_test_split(
-        X, y, test_size=TEST_SIZE, random_state=RANDOM_SEED, stratify=X['is_ev']
-    )
-    
-    # Output the dimensions of the training and testing partitions
-    print(f"Split data into Training ({X_train_raw.shape[0]}) and Testing ({X_test_raw.shape[0]}) partitions")
-
-    # Apply One-Hot Encoding to low-cardinality features to prevent false ordinality in models
-    low_card = ['country', 'transmission', 'fuelType']
-    X_train = pd.get_dummies(X_train_raw, columns=low_card, drop_first=True)
-    X_test = pd.get_dummies(X_test_raw, columns=low_card, drop_first=True)
-    
-    # Align training and testing feature sets to maintain consistent dimensionality
-    X_train, X_test = X_train.align(X_test, join='left', axis=1, fill_value=0)
-    print(f"Final feature matrix contains {X_train.shape[1]} columns after One-Hot Encoding")
-
-    # Calculate sample weights to prioritize predictive accuracy within the UK market
-    weights = np.where(X_train_raw['country'] == 'uk', 4.0, 0.5)
-    print("Computed sample weights (UK: 4.0, Other: 0.5) to prioritize regional accuracy")
-
-    # Start the hyperparameter tuning and optimization phase
-    base_pipeline = build_pipeline()
-
-    # Define the search space for hyperparameter optimization to improve model stability
-    params = {
-        'regressor__n_estimators': [100, 200, 300],
-        'regressor__max_depth': [10, 20, None],
-        'regressor__max_features': ['sqrt', 1.0]
-    }
-
-    # Initialize RandomizedSearchCV with 5-fold cross-validation to find the optimal configuration
-    search = RandomizedSearchCV(
-        base_pipeline, params, n_iter=10, cv=5, 
-        scoring='neg_mean_absolute_error', n_jobs=-1, random_state=RANDOM_SEED
-    )
-
-    # Execute the hyperparameter search using calculated sample weights for training
-    print("Initiating RandomizedSearchCV optimization phase...")
-    search.fit(X_train, y_train, regressor__sample_weight=weights)
-    
-    # Extract the best performing pipeline estimator for final assessment
-    best_model = search.best_estimator_
-    
-    # Log the optimal parameters identified by the search process
-    print(f"Optimization phase concluded. Best Parameters: {search.best_params_}")
-
-    # Execute model assessment and overfitting audit
-    train_r2 = evaluate_performance(best_model, X_train, y_train, "Training")
-    
-    # Evaluate the test set to verify generalization capability on unseen data
-    test_r2 = evaluate_performance(best_model, X_test, y_test, "Testing")
-    
-    # Output the R2 variance to detect potential overfitting issues
-    print(f"\nR² Variance (Train - Test): {train_r2 - test_r2:.4f}")
-
-    # Perform robust cross-validation to verify model consistency across folds
-    print("Executing 5-Fold Cross-Validation on the optimized model...")
-    cv_scores = cross_val_score(best_model, X_train, y_train, cv=5, scoring='r2')
-    
-    # Output the mean R2 score and standard deviation across folds to verify stability
-    print(f"Mean CV R²: {cv_scores.mean():.4f} (+/- {cv_scores.std():.4f})")
-
-    # Package the model, features, and imputation metadata into a deployment bundle
-    bundle = {
-        "pipeline": best_model,
-        "non_ev_mpg_median": mpg_med,
-        "non_ev_engine_median": engine_med,
-        "feature_columns": list(X_train.columns)
-    }
-
-    # Save the deployment bundle to the model directory using joblib serialization
-    save_path = os.path.join(MODEL_DIR, 'model.pkl')
-    joblib.dump(bundle, save_path)
-    
-    # Output final verification confirmation to the console
-    print(f"\nFinal Deployment Bundle saved successfully to: {save_path}")
+    # Execute the pipeline
+    run_training()

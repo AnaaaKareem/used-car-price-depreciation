@@ -137,4 +137,4 @@ if st.button("Get Valuation", use_container_width=True):
                 
     except Exception as e:
         # Output critical connection logs if the backend service is unreachable
-        st.error("Connection Failed: Backend server not reachable.")
+        st.error(f"Connection Failed: Backend server not reachable. Details: {e}")

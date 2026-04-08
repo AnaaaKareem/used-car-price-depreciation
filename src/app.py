@@ -58,6 +58,8 @@ class CarRequest(BaseModel):
     transmission: str
     fuelType: str
     country: str
+    engineSize: float = 1.6
+    mpg: float = 45.0
 
 @app.post("/predict")
 def predict_price(data: CarRequest):
@@ -82,7 +84,9 @@ def predict_price(data: CarRequest):
         'fuelType': data.fuelType.strip().title(),
         'country': data.country.strip().lower(),
         'age': current_year - data.year,
-        'is_ev': 1 if data.fuelType.lower() == 'electric' else 0
+        'is_ev': 1 if data.fuelType.lower() == 'electric' else 0,
+        'mpg': data.mpg,
+        'engineSize': data.engineSize
     }
 
     # --- Imputation ---
@@ -90,10 +94,6 @@ def predict_price(data: CarRequest):
     if record['is_ev'] == 1:
         record['mpg'] = mpg_med
         record['engineSize'] = eng_med
-    else:
-        # Assign standard fallback values for non-EV records if specific data is missing
-        record['mpg'] = 45.0 
-        record['engineSize'] = 1.6
 
     # Convert the processed record into a pandas dataframe for pipeline compatibility
     input_df = pd.DataFrame([record])
@@ -129,6 +129,7 @@ def predict_price(data: CarRequest):
         "vehicle": f"{data.year} {record['make']} {record['model']}",
         "predicted_valuation_gbp": round(prediction_gbp, 2),
         "predicted_valuation_usd": round(prediction_usd, 2),
+        "market_confidence": "High (Primary Market)" if record['country'] == 'uk' else "Low (Exchange Rate Extrapolation)",
         "market_context": {
             "is_uk_market": bool(input_df['country_uk'][0]),
             "calculated_age": record['age'],
